@@ -19,12 +19,12 @@ from helpers.decorators import errors
 async def play(_, message: Message):
     audio = (message.reply_to_message.audio or message.reply_to_message.voice) if message.reply_to_message else None
 
-    res = await message.reply_text("🔄 Processing...")
+    res = await message.reply_text("**Give me a time. I will Process and Play it 😇**")
 
     if audio:
         if round(audio.duration / 60) > DURATION_LIMIT:
             raise DurationLimitError(
-                f"Videos longer than {DURATION_LIMIT} minute(s) aren't allowed, the provided video is {audio.duration / 60} minute(s)"
+                f"**Sorry 🥺, That music has {audio.duration / 60} minutes and it very long. I cant play that 😕. I can only play {DURATION_LIMIT} minites videos**"
             )
 
         file_name = audio.file_unique_id + "." + (
@@ -56,7 +56,7 @@ async def play(_, message: Message):
                         break
 
         if offset in (None,):
-            await res.edit_text("❗️ You did not give me anything to play.")
+            await res.edit_text("**❗️ Please give me a youtube link or audio file. Then I will play it ☺️**")
             return
 
         url = text[offset:offset + length]
@@ -64,7 +64,7 @@ async def play(_, message: Message):
 
     if message.chat.id in callsmusic.active_chats:
         position = await queues.put(message.chat.id, file=file)
-        await res.edit_text(f"*️⃣ Queued at position {position}")
+        await res.edit_text(f"**Ohh that's beautiful song 😍 I queuered at {position}**")
     else:
-        await res.edit_text("🎧 Playing...")
+        await res.edit_text("🎧 **Hehe I am Playing your songs 😇...**")
         await callsmusic.set_stream(message.chat.id, file)
